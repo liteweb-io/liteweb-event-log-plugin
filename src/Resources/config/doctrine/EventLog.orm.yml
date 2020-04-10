@@ -13,8 +13,8 @@ Liteweb\EventLogPlugin\Entity\EventLog:
     entity_type:
       type: string
 
-      entity_id:
-        type: string
+    entity_id:
+      type: string
 
     payload:
       type: json_array
