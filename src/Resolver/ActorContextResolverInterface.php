@@ -1,6 +1,6 @@
 <?php
 
-namespace Litweb\EventLogPlugin\Resolver;
+namespace Liteweb\EventLogPlugin\Resolver;
 
 use Liteweb\EventLogPlugin\Model\ActorContext;
 

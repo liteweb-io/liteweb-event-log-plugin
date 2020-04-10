@@ -75,6 +75,7 @@ class EventLog
         $this->user_context = $actor->getUserContext();
         $this->user_context_id = $actor->getUserId();
         $this->url = $url;
+        $this->occurred_at = new \DateTime();
         $this->entity_id = $entityID;
         $this->entity_type = $entityType;
     }
@@ -94,7 +95,7 @@ class EventLog
         string $entityID,
         ?string $url = null
     ) : EventLog {
-        return new self($payload, $actorContext, $url, $entityType, $entityID);
+        return new self($payload, $actorContext, $entityType, $entityID, $url);
     }
 
 }

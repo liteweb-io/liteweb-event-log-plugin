@@ -1,6 +1,6 @@
 parameters:
   liteweb.event.log.whitelist_entities:
-    - AppBundle\Entity\Order
+    - AppBundle\Entity\Customer
 
 services:
 

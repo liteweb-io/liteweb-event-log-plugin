@@ -1,12 +1,13 @@
 Liteweb\EventLogPlugin\Entity\EventLog:
   type: entity
+  table: liteweb_event_log
   id:
     id:
       type: integer
       generator: { strategy: AUTO }
 
   fields:
-    occured_at:
+    occurred_at:
       type: datetime
 
     entity_type:
