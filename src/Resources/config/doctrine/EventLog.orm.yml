@@ -1,6 +1,6 @@
 Liteweb\EventLogPlugin\Entity\EventLog:
   type: entity
-  table: liteweb_event_log
+  table: liteweb_event_log_new
   id:
     id:
       type: integer
