@@ -19,7 +19,7 @@ final class GenericEntityListener
     /**
      * @var array
      */
-    private $whitelistedEntities;
+    private $blackListEntities;
 
     /**
      * @var ActorContextResolverInterface
@@ -44,12 +44,12 @@ final class GenericEntityListener
      * @param RequestStack $requestStack
      */
     public function __construct(
-        array $whitelistedEntities,
+        array $blackListEntities,
         ActorContextResolverInterface $actorContextResolver,
         EntityManagerInterface $entityManager,
         RequestStack $requestStack
     ) {
-        $this->whitelistedEntities = $whitelistedEntities;
+        $this->blackListEntities = $blackListEntities[0];
         $this->actorContextResolver = $actorContextResolver;
         $this->entityManager = $entityManager;
         $this->requestStack = $requestStack;
@@ -88,7 +88,11 @@ final class GenericEntityListener
      */
     private function process(LifecycleEventArgs $args) : void
     {
-        if(!$this->isOnWhiteList($args->getObject())) {
+        if($args->getObject() instanceof EventLog) {
+            return;
+        }
+
+        if($this->isOnBlacklist($args->getObject())) {
             return;
         }
 
@@ -118,12 +122,9 @@ final class GenericEntityListener
         $this->entityManager->flush();
     }
 
-    /**
-     * @param $object
-     * @return bool
-     */
-    private function isOnWhiteList($object) : bool
+    private function isOnBlacklist($object) : bool
     {
-        return in_array(get_class($object), $this->whitelistedEntities, true);
+        return in_array(get_class($object), $this->blackListEntities);
     }
+
 }

@@ -1,6 +1,6 @@
 parameters:
-  liteweb.event.log.whitelist_entities:
-    - AppBundle\Entity\Customer
+  liteweb.event.log.blacklist_entities:
+    - [AppBundle\Entity\Order, AppBundle\Entity\OrderItem, AppBundle\Entity\OrderItemUnit]
 
 services:
 
@@ -11,7 +11,7 @@ services:
 
   litweb.event_log_plugin.listener.generic_entity_listener:
     class: Liteweb\EventLogPlugin\Listener\GenericEntityListener
-    arguments: ['%liteweb.event.log.whitelist_entities%', '@litweb.event_log_plugin.resolver.actor_context_resolver', '@doctrine.orm.entity_manager','@request_stack']
+    arguments: ['%liteweb.event.log.blacklist_entities%', '@litweb.event_log_plugin.resolver.actor_context_resolver', '@doctrine.orm.entity_manager','@request_stack']
     tags:
       - { name: doctrine.event_listener, event: postPersist }
       - { name: doctrine.event_listener, event: postRemove }
