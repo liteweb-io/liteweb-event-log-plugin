@@ -1,6 +1,6 @@
 parameters:
   liteweb.event.log.blacklist_entities:
-    - [AppBundle\Entity\Order, AppBundle\Entity\OrderItem, AppBundle\Entity\OrderItemUnit]
+    - [AppBundle\Entity\OrderItemUnit]
 
 services:
 
