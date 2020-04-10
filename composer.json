@@ -1,0 +1,23 @@
+{
+    "name": "liteweb-io/event-log-plugin",
+    "description": "Plugin for log any event",
+    "type": "sylius-plugin",
+    "prefer-stable": true,
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kamil Fronczak",
+            "email": "kamilfronczak@pm.me"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "sylius/sylius": "^1.4"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Liteweb\\EventLogPlugin\\": "src/"
+        }
+    }
+}

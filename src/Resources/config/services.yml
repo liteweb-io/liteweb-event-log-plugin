@@ -1,0 +1,18 @@
+parameters:
+  liteweb.event.log.whitelist_entities:
+    - AppBundle\Entity\Order
+
+services:
+
+  litweb.event_log_plugin.resolver.actor_context_resolver:
+    class: Liteweb\EventLogPlugin\Resolver\ActorContextResolver
+    arguments: ['@security.token_storage']
+    public: true
+
+  litweb.event_log_plugin.listener.generic_entity_listener:
+    class: Liteweb\EventLogPlugin\Listener\GenericEntityListener
+    arguments: ['%liteweb.event.log.whitelist_entities%', '@litweb.event_log_plugin.resolver.actor_context_resolver', '@doctrine.orm.entity_manager','@request_stack']
+    tags:
+      - { name: doctrine.event_listener, event: postPersist }
+      - { name: doctrine.event_listener, event: postRemove }
+      - { name: doctrine.event_listener, event: postUpdate }

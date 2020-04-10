@@ -1,0 +1,35 @@
+Liteweb\EventLogPlugin\Entity\EventLog:
+  type: entity
+  id:
+    id:
+      type: integer
+      generator: { strategy: AUTO }
+
+  fields:
+    occured_at:
+      type: datetime
+
+    entity_type:
+      type: string
+
+      entity_id:
+        type: string
+
+    payload:
+      type: json_array
+
+    actor:
+      type: string
+
+    user_context:
+      type: string
+      nullable: true
+
+    user_context_id:
+      type: string
+      nullable: true
+
+    url:
+      type: string
+      nullable: true
+
