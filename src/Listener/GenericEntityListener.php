@@ -117,7 +117,7 @@ final class GenericEntityListener
 
         $reflectedProperty->setAccessible(false);
 
-        $eventLog = EventLog::log($changes, $actorContext, get_class($currentEntity), $entityID, $requestUri);
+        $eventLog = EventLog::log($changes, $actorContext, get_class($currentEntity), $entityID ?? 'deleted', $requestUri);
         $this->entityManager->persist($eventLog);
         $this->entityManager->flush();
     }
