@@ -112,14 +112,28 @@ final class GenericEntityListener
         $reflectedEntity  = new ReflectionObject($currentEntity);
         $reflectedProperty = $reflectedEntity->getProperty('id');
         $reflectedProperty->setAccessible(true);
+        $occuredAt = (new \DateTime())->format('Y-m-d H:i:s');
 
         $entityID = $reflectedProperty->getValue($currentEntity);
 
         $reflectedProperty->setAccessible(false);
 
-        $eventLog = EventLog::log($changes, $actorContext, get_class($currentEntity), $entityID ?? 'deleted', $requestUri);
-        $this->entityManager->persist($eventLog);
-        $this->entityManager->flush();
+        $connection = $this->entityManager->getConnection();
+        $sql = "INSERT INTO liteweb_event_log_new 
+            ('occurred_at', 'entity_type', 'payload', 'actor', 'user_context', 'user_context_id', 'url') VALUES
+            (':occured_at', ':entity_type', ':payload', ':actor', ':user_context', ':user_context_id', ':url')
+        ";
+
+        $statement = $connection->prepare($sql);
+        $statement->bindParam('entity_type', get_class($currentEntity));
+        $statement->bindParam('occured_at', $occuredAt);
+        $statement->bindParam('payload', $changes);
+        $statement->bindParam('actor', $entityID ?? 'unknown');
+        $statement->bindParam('user_context', $actorContext);
+        $statement->bindParam('url', $requestUri);
+
+        $statement->execute();
+
     }
 
     private function isOnBlacklist($object) : bool
