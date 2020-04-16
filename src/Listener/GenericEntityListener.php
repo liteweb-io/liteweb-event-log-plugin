@@ -100,6 +100,7 @@ final class GenericEntityListener
         $actorContext = $this->actorContextResolver->resolve();
         $uow = $this->entityManager->getUnitOfWork();
         $changes = $uow->getEntityChangeSet($currentEntity);
+        $changes = json_encode($changes);
         $requestUri = null;
 
         /*
@@ -113,6 +114,7 @@ final class GenericEntityListener
         $reflectedProperty = $reflectedEntity->getProperty('id');
         $reflectedProperty->setAccessible(true);
         $occuredAt = (new \DateTime())->format('Y-m-d H:i:s');
+        $entityType = get_class($currentEntity);
 
         $entityID = $reflectedProperty->getValue($currentEntity);
 
@@ -125,12 +127,12 @@ final class GenericEntityListener
         ";
 
         $statement = $connection->prepare($sql);
-        $statement->bindParam('entity_type', get_class($currentEntity));
+        $statement->bindParam('entity_type', $entityType);
         $statement->bindParam('occured_at', $occuredAt);
         $statement->bindParam('payload', $changes);
         $statement->bindParam('actor', $entityID ?? 'unknown');
         $statement->bindParam('user_context', $actorContext);
-        $statement->bindParam('url', $requestUri);
+        $statement->bindParam('url', $requestUri ?? '');
 
         $statement->execute();
 
