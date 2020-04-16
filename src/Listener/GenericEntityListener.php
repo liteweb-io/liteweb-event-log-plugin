@@ -124,17 +124,19 @@ final class GenericEntityListener
 
         $connection = $this->entityManager->getConnection();
         $sql = "INSERT INTO liteweb_event_log_new 
-            ('occurred_at', 'entity_type', 'payload', 'actor', 'user_context', 'user_context_id', 'url') VALUES
-            (':occured_at', ':entity_type', ':payload', ':actor', ':user_context', ':user_context_id', ':url')
+            ('occurred_at', 'entity_type', 'payload', 'actor', 'user_context', 'user_context_id', 'url', 'entity_id') VALUES
+            (':occured_at', ':entity_type', ':payload', ':actor', ':user_context', ':user_context_id', ':url', ':entity_id')
         ";
 
         $statement = $connection->prepare($sql);
         $statement->bindValue('entity_type', $entityType);
         $statement->bindValue('occured_at', $occuredAt);
         $statement->bindValue('payload', $changes);
-        $statement->bindValue('actor', $entityID);
-        $statement->bindValue('user_context', $actorContext);
+        $statement->bindValue('actor', $actorContext->getActor());
+        $statement->bindValue('user_context', $actorContext->getUserContext());
+        $statement->bindValue('user_context_id', $actorContext->getUserId());
         $statement->bindValue('url', $requestUri);
+        $statement->bindValue('entity_id', $entityID);
 
         $statement->execute();
 
