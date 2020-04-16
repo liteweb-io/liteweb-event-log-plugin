@@ -120,6 +120,8 @@ final class GenericEntityListener
 
         $reflectedProperty->setAccessible(false);
 
+        $entityID = $entityID == null ? 'unknown' : $entityID;
+
         $connection = $this->entityManager->getConnection();
         $sql = "INSERT INTO liteweb_event_log_new 
             ('occurred_at', 'entity_type', 'payload', 'actor', 'user_context', 'user_context_id', 'url') VALUES
@@ -127,12 +129,12 @@ final class GenericEntityListener
         ";
 
         $statement = $connection->prepare($sql);
-        $statement->bindParam('entity_type', $entityType);
-        $statement->bindParam('occured_at', $occuredAt);
-        $statement->bindParam('payload', $changes);
-        $statement->bindParam('actor', $entityID ?? 'unknown');
-        $statement->bindParam('user_context', $actorContext);
-        $statement->bindParam('url', $requestUri ?? '');
+        $statement->bindValue('entity_type', $entityType);
+        $statement->bindValue('occured_at', $occuredAt);
+        $statement->bindValue('payload', $changes);
+        $statement->bindValue('actor', $entityID);
+        $statement->bindValue('user_context', $actorContext);
+        $statement->bindValue('url', $requestUri);
 
         $statement->execute();
 
