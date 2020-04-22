@@ -96,7 +96,6 @@ final class GenericEntityListener
             return;
         }
 
-
         $currentEntity = $args->getObject();
         $actorContext = $this->actorContextResolver->resolve();
         $uow = $this->entityManager->getUnitOfWork();
@@ -111,17 +110,21 @@ final class GenericEntityListener
             $requestUri = $this->requestStack->getCurrentRequest()->getRequestUri();
         }
 
-        $reflectedEntity  = new ReflectionObject($currentEntity);
-        $reflectedProperty = $reflectedEntity->getProperty('id');
-        $reflectedProperty->setAccessible(true);
         $occuredAt = (new \DateTime())->format('Y-m-d H:i:s');
         $entityType = get_class($currentEntity);
+        $entityID = 'unknown';
 
-        $entityID = $reflectedProperty->getValue($currentEntity);
+        try {
+            $reflectedEntity = new ReflectionObject($currentEntity);
+            $reflectedProperty = $reflectedEntity->getProperty('id');
+            $reflectedProperty->setAccessible(true);
+            $entityID = $reflectedProperty->getValue($currentEntity);
+            $reflectedProperty->setAccessible(false);
 
-        $reflectedProperty->setAccessible(false);
-
-        $entityID = $entityID == null ? 'unknown' : $entityID;
+            $entityID = $entityID == null ? 'unknown' : $entityID;
+        } catch (\Exception $exception) {
+            //Let them pass. We are only try to obtain ID from reflection here
+        }
 
         $connection = $this->entityManager->getConnection();
         $connection->insert('liteweb_event_log_new', [

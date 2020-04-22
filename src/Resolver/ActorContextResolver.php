@@ -18,14 +18,10 @@ final class ActorContextResolver implements ActorContextResolverInterface
      */
     private $tokenStorage;
 
-    /**
-     *
-     */
     private const SYSTEM_CONTEXT = 'system';
 
-    /**
-     *
-     */
+    private const GUEST_CONTEXT = 'guest';
+
     private const USER_CONTEXT = 'user';
 
     /**
@@ -44,12 +40,16 @@ final class ActorContextResolver implements ActorContextResolverInterface
     {
         $securityToken = $this->tokenStorage->getToken();
 
-        if($securityToken === null) {
+        if(php_sapi_name() === 'cli') {
             return new ActorContext(self::SYSTEM_CONTEXT);
         }
 
+        if($securityToken === null) {
+            return new ActorContext(self::GUEST_CONTEXT);
+        }
+
         if(is_string($securityToken->getUser())) {
-            return new ActorContext(self::SYSTEM_CONTEXT);
+            return new ActorContext(self::GUEST_CONTEXT);
         }
 
         $user = $securityToken->getUser();
