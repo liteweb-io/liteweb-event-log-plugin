@@ -88,13 +88,14 @@ final class GenericEntityListener
      */
     private function process(LifecycleEventArgs $args) : void
     {
-        if($args->getObject() instanceof EventLog) {
+        if($args->getObject() instanceof EventLog || $args->getObject() instanceof \AppBundle\Entity\EventLog) {
             return;
         }
 
         if($this->isOnBlacklist($args->getObject())) {
             return;
         }
+
 
         $currentEntity = $args->getObject();
         $actorContext = $this->actorContextResolver->resolve();
@@ -123,23 +124,16 @@ final class GenericEntityListener
         $entityID = $entityID == null ? 'unknown' : $entityID;
 
         $connection = $this->entityManager->getConnection();
-        $sql = "INSERT INTO liteweb_event_log_new 
-            ('occurred_at', 'entity_type', 'payload', 'actor', 'user_context', 'user_context_id', 'url', 'entity_id') VALUES
-            (':occured_at', ':entity_type', ':payload', ':actor', ':user_context', ':user_context_id', ':url', ':entity_id')
-        ";
-
-        $statement = $connection->prepare($sql);
-        $statement->bindValue('entity_type', $entityType);
-        $statement->bindValue('occured_at', $occuredAt);
-        $statement->bindValue('payload', $changes);
-        $statement->bindValue('actor', $actorContext->getActor());
-        $statement->bindValue('user_context', $actorContext->getUserContext());
-        $statement->bindValue('user_context_id', $actorContext->getUserId());
-        $statement->bindValue('url', $requestUri);
-        $statement->bindValue('entity_id', $entityID);
-
-        $statement->execute();
-
+        $connection->insert('liteweb_event_log_new', [
+            'entity_type' => $entityType,
+            'occurred_at' => $occuredAt,
+            'entity_id' => $entityID,
+            'url' => $requestUri,
+            'payload' => $changes,
+            'actor' => $actorContext->getActor(),
+            'user_context_id' => $actorContext->getUserContext(),
+            'user_context' => $actorContext->getUserContext()
+        ]);
     }
 
     private function isOnBlacklist($object) : bool
